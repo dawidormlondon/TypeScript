@@ -433,7 +433,12 @@ namespace ts {
             }
 
             function getDirectories(path: string): string[] {
-                return filter<string>(_fs.readdirSync(path), dir => fileSystemEntryExists(combinePaths(path, dir), FileSystemEntryKind.Directory));
+                try {
+                    return filter<string>(_fs.readdirSync(path), dir => fileSystemEntryExists(combinePaths(path, dir), FileSystemEntryKind.Directory));
+                }
+                catch {
+                    return [];
+                }
             }
 
             const nodeSystem: System = {
