@@ -1794,6 +1794,10 @@ namespace ts.server {
                     this.openFilesWithNonRootedDiskPath.set(this.toCanonicalFileName(fileName), info);
                 }
             }
+            else if (openedByClient) {
+                info.fileName = fileName;
+            }
+
             if (openedByClient && !info.isScriptOpen()) {
                 // Opening closed script info
                 // either it was created just now, or was part of projects but was closed
@@ -1804,7 +1808,7 @@ namespace ts.server {
                 }
             }
             else {
-                Debug.assert(fileContent === undefined);
+                Debug.assert(fileContent === undefined || fileContent === info.getSnapshot().getText(0, info.getSnapshot().getLength()));
             }
             return info;
         }

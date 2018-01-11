@@ -3486,6 +3486,23 @@ namespace ts.projectSystem {
         it("works when project root is used with case-insensitive system", () => {
             verifyOpenFileWorks(/*useCaseSensitiveFileNames*/ false);
         });
+
+        it("updates file name reopened with different casing", () => {
+            const file: FileOrFolder = {
+                path: "/a.ts",
+                content: "",
+            };
+            const host = createServerHost([file], { useCaseSensitiveFileNames: false });
+            const projectService = createProjectService(host);
+            projectService.openClientFile(file.path);
+
+            const newPath = "/A.ts";
+            host.renameFile(file.path, newPath);
+            projectService.closeClientFile(file.path);
+            projectService.openClientFile(newPath, file.content);
+
+            checkProjectActualFiles(projectService.inferredProjects[0], [newPath]);
+        });
     });
 
     describe("tsserverProjectSystem Language service", () => {
